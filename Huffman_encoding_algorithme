@@ -1,0 +1,82 @@
+# source_string = input()
+source_string = "trtreterteertreterterrrrex"
+# смотрим сколько в строке разных букв
+letters = set()
+for i in source_string:
+    letters.add(i)
+    
+# граничный случай, если в строке всего один тип букв, например аааааааааа
+if len(letters) == 1:
+    for x in letters:
+        print(1, len(source_string))
+        print(f'{x}: 0')
+        print('0' * len(source_string))
+# граничный случай, если в строке ровно два типа букв, например абаааабббааабаа
+if len(letters) == 2:
+    letters = list(letters)
+    print (2, len (source_string))
+    for i in range (2):
+#         print[f'{letters[i]}: {i}']
+        print(str(letters[i]) + ":", i)
+    for i in source_string:
+        if i == letters[0]:
+            print('0', end='')
+        else:
+            print('1', end='')
+else:
+# создаем список частот и сортируем его по возрастанию
+    frequencies = []
+    for i in letters:
+        frek = source_string.count(i)
+        frequencies.append((i, frek))
+    frequencies.sort(key=lambda x: x[1])
+    print("frequencies are", frequencies)
+
+    #создаём словарь со всеми встречающимися буквами, ключ пустая строка
+    letters_codes = dict.fromkeys(letters, '')
+
+# 1. создаём дерево: берем две текущие самые низкие частоты/певые в списке частот
+# 2. добавляем их коды в скисок комбинаций кодов / оно же дерево
+# 3. в списке частот создаём новый узел, добавляем в конец. 
+# 3а. какой это узел: нулевой элемент кортежа сумма строк, первый элемент сумма частот
+# если на тесте времени не хватит, тогда в начало или под номером 2
+# 4. удаляем из списка частот 0 и 1 элемент
+# 4a. сортируем список
+# 5. повторять пока длина списка списка частот больше 1(если 1 то не сможем удалить 2 элемента)
+    combinations_codes = []
+    while len(frequencies) > 1: # 5.
+        combinations_codes.append((frequencies[0][0], '0')) # 1, 2.
+        combinations_codes.append((frequencies[1][0], '1')) # 1, 2.
+        frequencies.append((frequencies[0][0] + frequencies[1][0], frequencies[0][1] + frequencies[1][1])) # 3.
+        frequencies.pop(0) # 4.
+        frequencies.pop(0) # 4.
+        frequencies.sort(key=lambda x: x[1]) # 4a.
+    print("root of the tree is", frequencies)
+    print("combinations_codes are", combinations_codes)
+# вывод результатов
+# перебираем каждую букву в множестве букв
+    for letter in letters:
+#строим для неё код от корня дерева к листьям: от последнего этлемента списка кодов до первого
+        code = ''
+# собираем код символа
+        for i in range(len(combinations_codes)-1, -1, -1):
+# если буква для которой собираем код, есть в элементе списка кодов в нулевом элементе кортежа, где комбинации символов
+            if letter in combinations_codes[i][0]:
+# дописываем к строке кода значение ветвления дерева 0 или 1, первый элемент кортежа
+                code += combinations_codes[i][1]
+#дособирали код, засовываем в словарь
+        letters_codes[letter] = code
+# вести считаем сколько символов в закодированной строке
+    length = 0
+    for letter in letters_codes:
+        length += len(letters_codes[letter]) * source_string.count(letter)
+# сколько разных символов, и сколько символов в строке
+    print(len(letters), length)
+#     print(letters_codes.items())
+#     print (letter + ':', code)
+# вывод каждой буквы с её кодом
+    for letter in letters_codes:
+        print(letter+":", letters_codes[letter])
+# вывод кодированной строки: для каджого символа печатаем значение из словаря по ключу
+    for letter in source_string:
+        print(letters_codes[letter], end='')
