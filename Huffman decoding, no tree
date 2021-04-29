@@ -1,0 +1,14 @@
+def decode(dictionary, encoded_string):
+    sequence = ''
+    decoded_string = ''
+    for symbol in encoded_string: # работаем с символом а не с его индексом, тогда не нужен range() и не нужно [i+1-l] 
+        sequence += symbol
+        if sequence in dictionary:
+            decoded_string += dictionary[sequence]
+            sequence = '' # и не нужны одинаковые команды чтобы прибавить символ, если код есть в словаре или его нет
+    return decoded_string
+
+k, l = map(int, input().split())
+huffman_table = dict(input().split(': ')[::-1] for _ in range(k))
+given_string = input()
+print(decode(huffman_table, given_string))
